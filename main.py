@@ -1,4 +1,6 @@
-import librosa
+from librosa import display
+import librosa.core as libIO
+import matplotlib.pyplot as plt
 
 file_extension = ".ogg"
 
@@ -14,7 +16,7 @@ while numberOfAudio < 34:
     # mono (se o áudio é mono ou stereo)
     # offset (caso eu queira começar de uma determinada parte do áudio)
     # duration (caso eu queira pegar somente uma parte do áudio)
-    samples, sampling_rate = librosa.load(
+    samples, sampling_rate = libIO.load(
                                 file_path,
                                 sr=None,
                                 mono=True,
@@ -26,4 +28,10 @@ while numberOfAudio < 34:
     # logo, podemos concluir que a duração de um áudio é igual a quantidadeDeAmostras/quantidadeDeAmostrasPorSegundo
     arrOfAudios.append([samples,sampling_rate])
     numberOfAudio += 1
-print(len(arrOfAudios))
+
+#Exibição do gráfico que representa o áudio
+plt.figure()
+display.waveplot(y = arrOfAudios[0][0], sr = arrOfAudios[0][1])
+plt.xlabel("Time (seconds) --> ")
+plt.ylabel("Amplitude")
+plt.show()
