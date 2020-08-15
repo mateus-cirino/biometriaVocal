@@ -1,6 +1,9 @@
 from librosa import display
-import librosa.core as libIO
-import matplotlib.pyplot as plt
+from librosa import core
+from scipy import fft
+from matplotlib import pyplot
+
+import numpy as np
 
 file_extension = ".ogg"
 
@@ -16,7 +19,7 @@ while numberOfAudio < 34:
     # mono (se o áudio é mono ou stereo)
     # offset (caso eu queira começar de uma determinada parte do áudio)
     # duration (caso eu queira pegar somente uma parte do áudio)
-    samples, sampling_rate = libIO.load(
+    samples, samplingRate = core.load(
                                 file_path,
                                 sr=None,
                                 mono=True,
@@ -24,14 +27,27 @@ while numberOfAudio < 34:
                                 duration=None
                                 )
     # samples contém um array de amostras
-    # sampling_rate contém a quantidade de amostras capturadas por segundo
+    # samplingRate contém a quantidade de amostras capturadas por segundo
     # logo, podemos concluir que a duração de um áudio é igual a quantidadeDeAmostras/quantidadeDeAmostrasPorSegundo
-    arrOfAudios.append([samples,sampling_rate])
+    arrOfAudios.append([samples,samplingRate])
     numberOfAudio += 1
 
-#Exibição do gráfico que representa o áudio
-plt.figure()
-display.waveplot(y = arrOfAudios[0][0], sr = arrOfAudios[0][1])
-plt.xlabel("Time (seconds) --> ")
-plt.ylabel("Amplitude")
-plt.show()
+samplesOfAudio1 = arrOfAudios[0][0]
+samplesRateOfAudio1 = arrOfAudios[0][1]
+
+#Exibição do gráfico que representa o sinal do áudio no dominio da amplitude
+pyplot.figure()
+display.waveplot(y = samplesOfAudio1, sr = samplesRateOfAudio1)
+pyplot.xlabel("Time (seconds) --> ")
+pyplot.ylabel("Amplitude")
+pyplot.show()
+
+#Exibição do gráfico que representa o sinal do áudio no dominio da frequência
+fftOut = fft(samplesOfAudio1)
+pyplot.figure()
+pyplot.plot(samplesOfAudio1, np.abs(fftOut))
+pyplot.xlabel("Frequence")
+pyplot.ylabel("Magnitude")
+pyplot.show()
+
+
