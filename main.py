@@ -35,10 +35,19 @@ while len(arrayDeFFTDosAudios) > 48000:
 trainer = BackpropTrainer(network, dataSet)
 iteration = 0
 error = 1
-while error > 0.001:
-    error = trainer.train()
-    print(iteration, error)
-    iteration += 1
+with open('TREINAMENTO.csv', mode='w+', newline='') as csv_file:
+    nomeDosCampos = ["Iteração",
+                     "Erro"
+                     ]
+    writer = csv.DictWriter(csv_file, fieldnames=nomeDosCampos)
+    writer.writeheader()
+    while error > 0.001:
+        error = trainer.train()
+        writer.writerow(
+            {"Iteração": iteration,
+             "Erro": round(error, 3)});
+        print(iteration, error)
+        iteration += 1
 
 numeroDeAudios = 1
 arrayComADuracaoDosAudios = []
@@ -52,7 +61,7 @@ while numeroDeAudios < 17:
     arrayDeFFTDosAudios.extend(fft(amostras))
     numeroDeAudios += 1
 
-with open('treinamentoRedeNeural.csv', mode='w+', newline='') as csv_file:
+with open('VALIDACAO.csv', mode='w+', newline='') as csv_file:
     nomeDosCampos = ["Nome do arquivo",
                      "Segundo",
                      "Valor esperado 1",
