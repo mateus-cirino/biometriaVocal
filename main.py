@@ -11,6 +11,8 @@ import csv
 
 import math
 
+import numpy
+
 EXTENSAO_ARQUIVO_AUDIO = ".ogg"
 NOME_DOS_CAMPOS_VALIDACAO = ["Nome do arquivo",
                              "Segundo",
@@ -58,10 +60,11 @@ def aplicarFFTnasAmostras(arrayDeAmostras):
 # Função que retorna um array com cada posição do mesmo contendo 1 segundo
 def separacaoEmSegundosDoAudio(arrayDosAudios):
     arrayDeSegundoDosAudios = []
-
-    while len(arrayDosAudios) > 48000:
-        arrayDeSegundoDosAudios.__add__(arrayDosAudios[:48000])
-        del arrayDosAudios[:48000]
+    totalDeSegundos = int(len(arrayDosAudios)/48000)
+    i = 1
+    while totalDeSegundos >= i:
+        arrayDeSegundoDosAudios.append(arrayDosAudios[48000 * (i - 1):48000 * i])
+        i += 1
 
     return arrayDeSegundoDosAudios
 
@@ -138,7 +141,7 @@ network = buildNetwork(48000, 100, 100, 10, 5)
 dataSet = SupervisedDataSet(48000, 5)
 
 # TREINAMENTO
-audios = carregarAudios("audiosMateusConjuntoSemPausa", 1)
+audios = carregarAudios("audiosMateusConjuntoSemPausa/", 1)
 
 audiosAposFFT = aplicarFFTnasAmostras(audios)
 
@@ -150,7 +153,7 @@ for segundo in arrayComOsSegundosDosAudios:
 treinamentoRedeNeural(network, dataSet)
 
 # VALIDACAO
-audios = carregarAudios("audiosMateusTesteSemEspacoEmBranco", 1)
+audios = carregarAudios("audiosMateusTesteSemEspacoEmBranco/", 1)
 
 audiosAposFFT = aplicarFFTnasAmostras(audios)
 
