@@ -33,7 +33,7 @@ NOME_DOS_CAMPOS_VALIDACAO = ["Nome do arquivo",
                              "Erro 5",
                              "Erro quadrático médio"
                              ]
-
+NOME_DO_TESTE = "com1ACamadaDe10"
 
 # Função que recebe o caminho da pasta e número de áudios que a pasta contem e retorna
 # um array contendo todas as amostras dos áudios na pasta
@@ -70,12 +70,12 @@ def separacaoEmSegundosDoAudio(arrayDosAudios):
 
 
 # Função para treinamento da Rede Neural Artificial
-def treinamentoRedeNeural(rede, dados):
+def treinamentoRedeNeural(rede, dados, nomeDoArquivoDeResultados):
     trainer = BackpropTrainer(rede, dados)
     iteration = 0
     error = 1
 
-    with open('TREINAMENTO.csv', mode='w+', newline='') as csv_file:
+    with open(nomeDoArquivoDeResultados, mode='w+', newline='') as csv_file:
         nomeDosCampos = ["Iteração",
                          "Erro"
                          ]
@@ -85,14 +85,13 @@ def treinamentoRedeNeural(rede, dados):
             error = trainer.train()
             writer.writerow(
                 {"Iteração": iteration,
-                 "Erro": round(error, 3)});
-            print(iteration, error)
+                 "Erro": error});
             iteration += 1
 
 
 # Função para a validação da Rede Neural Artificial
-def validacaoRedeNeural(rede, dados, nomeDoArquivo, valoresEsperados):
-    with open('VALIDACAO.csv', mode='w+', newline='') as csv_file:
+def validacaoRedeNeural(rede, dados, nomeDoArquivo, valoresEsperados, nomeDoArquivoDeResultados):
+    with open(nomeDoArquivoDeResultados, mode='w+', newline='') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=NOME_DOS_CAMPOS_VALIDACAO)
         writer.writeheader()
         i = 0
@@ -141,7 +140,7 @@ network = buildNetwork(48000, 100, 100, 10, 5)
 dataSet = SupervisedDataSet(48000, 5)
 
 # TREINAMENTO
-audios = carregarAudios("audiosMateusConjuntoSemPausa/", 1)
+audios = carregarAudios("audios/audiosMateusConjuntoSemPausa/", 1)
 
 audiosAposFFT = aplicarFFTnasAmostras(audios)
 
@@ -150,15 +149,15 @@ arrayComOsSegundosDosAudios = separacaoEmSegundosDoAudio(audiosAposFFT)
 for segundo in arrayComOsSegundosDosAudios:
     dataSet.addSample(segundo, (10, 10, 10, 10, 10))
 
-treinamentoRedeNeural(network, dataSet)
+treinamentoRedeNeural(network, dataSet, ("TREINAMENTO" + NOME_DO_TESTE + ".csv"))
 
 # VALIDACAO
-audios = carregarAudios("audiosMateusTesteSemEspacoEmBranco/", 1)
+audios = carregarAudios("audios/audiosMateusTesteSemEspacoEmBranco/", 1)
 
 audiosAposFFT = aplicarFFTnasAmostras(audios)
 
 arrayComOsSegundosDosAudios = separacaoEmSegundosDoAudio(audiosAposFFT)
 
-validacaoRedeNeural(network, arrayComOsSegundosDosAudios, "1.ogg", [10, 10, 10, 10, 10])
+validacaoRedeNeural(network, arrayComOsSegundosDosAudios, "1.ogg", [10, 10, 10, 10, 10], ("VALIDACAO" + NOME_DO_TESTE + ".csv"))
 
-NetworkWriter.writeToFile(network, 'network.xml')
+NetworkWriter.writeToFile(network, ("network" + NOME_DO_TESTE + ".xml"))
