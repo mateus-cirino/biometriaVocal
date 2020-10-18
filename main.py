@@ -13,6 +13,7 @@ import math
 
 import numpy
 
+# Constantes
 EXTENSAO_ARQUIVO_AUDIO = ".ogg"
 NOME_DOS_CAMPOS_VALIDACAO = ["Nome do arquivo",
                              "Segundo",
@@ -34,6 +35,9 @@ NOME_DOS_CAMPOS_VALIDACAO = ["Nome do arquivo",
                              "Erro quadrático médio"
                              ]
 NOME_DO_TESTE = "com1ACamadaDe10"
+NETWORK = buildNetwork(48000, 100, 100, 10, 5)
+# NETWORK = NetworkReader.readFrom('network.xml');
+DATASET = SupervisedDataSet(48000, 5)
 
 # Função que recebe o caminho da pasta e número de áudios que a pasta contem e retorna
 # um array contendo todas as amostras dos áudios na pasta
@@ -97,7 +101,7 @@ def validacaoRedeNeural(rede, dados, nomeDoArquivo, valoresEsperados, nomeDoArqu
         i = 0
         for segundo in dados:
             i += 1
-            saidaDaRedeNeural = network.activate(segundo)
+            saidaDaRedeNeural = rede.activate(segundo)
             writer.writerow(
                 {
                     NOME_DOS_CAMPOS_VALIDACAO[0]: nomeDoArquivo + EXTENSAO_ARQUIVO_AUDIO,
@@ -132,13 +136,6 @@ def validacaoRedeNeural(rede, dados, nomeDoArquivo, valoresEsperados, nomeDoArqu
                 }
             )
 
-
-network = buildNetwork(48000, 100, 100, 10, 5)
-
-# network = NetworkReader.readFrom('network.xml');
-
-dataSet = SupervisedDataSet(48000, 5)
-
 # TREINAMENTO
 audios = carregarAudios("audios/audiosMateusConjuntoSemPausa/", 1)
 
@@ -147,9 +144,9 @@ audiosAposFFT = aplicarFFTnasAmostras(audios)
 arrayComOsSegundosDosAudios = separacaoEmSegundosDoAudio(audiosAposFFT)
 
 for segundo in arrayComOsSegundosDosAudios:
-    dataSet.addSample(segundo, (10, 10, 10, 10, 10))
+    DATASET.addSample(segundo, (10, 10, 10, 10, 10))
 
-treinamentoRedeNeural(network, dataSet, ("TREINAMENTO" + NOME_DO_TESTE + ".csv"))
+treinamentoRedeNeural(NETWORK, DATASET, ("TREINAMENTO" + NOME_DO_TESTE + ".csv"))
 
 # VALIDACAO
 audios = carregarAudios("audios/audiosMateusTesteSemEspacoEmBranco/", 1)
@@ -158,6 +155,6 @@ audiosAposFFT = aplicarFFTnasAmostras(audios)
 
 arrayComOsSegundosDosAudios = separacaoEmSegundosDoAudio(audiosAposFFT)
 
-validacaoRedeNeural(network, arrayComOsSegundosDosAudios, "1.ogg", [10, 10, 10, 10, 10], ("VALIDACAO" + NOME_DO_TESTE + ".csv"))
+validacaoRedeNeural(NETWORK, arrayComOsSegundosDosAudios, "1.ogg", [10, 10, 10, 10, 10], ("VALIDACAO" + NOME_DO_TESTE + ".csv"))
 
-NetworkWriter.writeToFile(network, ("network" + NOME_DO_TESTE + ".xml"))
+NetworkWriter.writeToFile(DATASET, ("network" + NOME_DO_TESTE + ".xml"))
