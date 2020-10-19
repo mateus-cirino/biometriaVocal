@@ -12,6 +12,9 @@ import csv
 import math
 
 import os
+# ATENÇÃO: ESSA VERSÃO DO CÓDIGO NÃO GERA ARQUIVOS CSV DE RESULTADOS (TREINAMENTO E VALIDAÇÃO)
+# CASO VOCÊ QUEIRA A GERAÇÃO DOS CSV UTILIZE O ARQUIVO MAIN.PY, ESSE ARQUIVO FOI CRIADO ÚNICO
+# E EXCLUSIVAMENTE PARA SUPORTE DE CÓDIGO PARA O ARTIGO DE TCC
 
 # SESSAO TREINAMENTO
 VERSAO = "48000-100-100-10-5-5"
@@ -83,66 +86,16 @@ def separacaoEmSegundosDoAudio(arrayDeAmostras):
 # Função para treinamento da Rede Neural Artificial
 def treinamentoRedeNeural(rede, dados, nomeDoArquivoDeResultados):
     trainer = BackpropTrainer(rede, dados)
-    iteration = 0
     error = 1
 
-    with open(nomeDoArquivoDeResultados, mode='w+', newline='') as csv_file:
-        nomeDosCampos = ["Iteração",
-                         "Erro"
-                         ]
-        writer = csv.DictWriter(csv_file, fieldnames=nomeDosCampos)
-        writer.writeheader()
-        while error > 0.0001:
-            error = trainer.train()
-            writer.writerow(
-                {"Iteração": iteration,
-                 "Erro": error})
-            print("i = ", iteration, " erro = ", error)
-            iteration += 1
+    while error > 0.0001:
+        error = trainer.train()
 
 
 # Função para a validação da Rede Neural Artificial
 def validacaoRedeNeural(rede, dados, nomeDoArquivo, valoresEsperados, nomeDoArquivoDeResultados):
-    with open(nomeDoArquivoDeResultados, mode='w+', newline='') as csv_file:
-        writer = csv.DictWriter(csv_file, fieldnames=NOME_DOS_CAMPOS_VALIDACAO)
-        writer.writeheader()
-        i = 0
-        for segundo in dados:
-            i += 1
-            saidaDaRedeNeural = rede.activate(segundo)
-            writer.writerow(
-                {
-                    NOME_DOS_CAMPOS_VALIDACAO[0]: nomeDoArquivo + EXTENSAO_ARQUIVO_AUDIO,
-                    NOME_DOS_CAMPOS_VALIDACAO[1]: str(i),
-                    NOME_DOS_CAMPOS_VALIDACAO[2]: valoresEsperados[0],
-                    NOME_DOS_CAMPOS_VALIDACAO[3]: round(saidaDaRedeNeural[0], 2),
-                    NOME_DOS_CAMPOS_VALIDACAO[4]: round((saidaDaRedeNeural[0] - valoresEsperados[0]), 2),
-                    NOME_DOS_CAMPOS_VALIDACAO[5]: valoresEsperados[1],
-                    NOME_DOS_CAMPOS_VALIDACAO[6]: round(saidaDaRedeNeural[1], 2),
-                    NOME_DOS_CAMPOS_VALIDACAO[7]: round((saidaDaRedeNeural[1] - valoresEsperados[1]), 2),
-                    NOME_DOS_CAMPOS_VALIDACAO[8]: valoresEsperados[2],
-                    NOME_DOS_CAMPOS_VALIDACAO[9]: round(saidaDaRedeNeural[2], 2),
-                    NOME_DOS_CAMPOS_VALIDACAO[10]: round((saidaDaRedeNeural[2] - valoresEsperados[2]), 2),
-                    NOME_DOS_CAMPOS_VALIDACAO[11]: valoresEsperados[3],
-                    NOME_DOS_CAMPOS_VALIDACAO[12]: round(saidaDaRedeNeural[3], 2),
-                    NOME_DOS_CAMPOS_VALIDACAO[13]: round((saidaDaRedeNeural[3] - valoresEsperados[3]), 2),
-                    NOME_DOS_CAMPOS_VALIDACAO[14]: valoresEsperados[4],
-                    NOME_DOS_CAMPOS_VALIDACAO[15]: round(saidaDaRedeNeural[4], 2),
-                    NOME_DOS_CAMPOS_VALIDACAO[16]: round((saidaDaRedeNeural[4] - valoresEsperados[4]), 2),
-                    NOME_DOS_CAMPOS_VALIDACAO[17]: round(math.sqrt(((
-                                                                            math.pow((saidaDaRedeNeural[0] -
-                                                                                      valoresEsperados[0]), 2) +
-                                                                            math.pow((saidaDaRedeNeural[1] -
-                                                                                      valoresEsperados[1]), 2) +
-                                                                            math.pow((saidaDaRedeNeural[2] -
-                                                                                      valoresEsperados[2]), 2) +
-                                                                            math.pow((saidaDaRedeNeural[3] -
-                                                                                      valoresEsperados[3]), 2) +
-                                                                            math.pow((saidaDaRedeNeural[4] -
-                                                                                      valoresEsperados[4]), 2)) / 5)),
-                                                         2)
-                }
-            )
+    for segundo in dados:
+        saidaDaRedeNeural = rede.activate(segundo)
 
 # SESSAO 1 => TREINAMENTO
 
