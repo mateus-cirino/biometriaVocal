@@ -27,25 +27,6 @@ NETWORK = buildNetwork(48000, 100, 100, 10, 5, 5)
 # OUTROS
 CAMINHO_RESULTADO = "resultado/" + VERSAO + "/"
 EXTENSAO_ARQUIVO_AUDIO = ".ogg"
-NOME_DOS_CAMPOS_VALIDACAO = ["Nome do arquivo",
-                             "Segundo",
-                             "Valor esperado 1",
-                             "Valor obtido 1",
-                             "Erro 1",
-                             "Valor esperado 2",
-                             "Valor obtido 2",
-                             "Erro 2",
-                             "Valor esperado 3",
-                             "Valor obtido 3",
-                             "Erro 3",
-                             "Valor esperado 4",
-                             "Valor obtido 4",
-                             "Erro 4",
-                             "Valor esperado 5",
-                             "Valor obtido 5",
-                             "Erro 5",
-                             "Erro quadrático médio"
-                             ]
 DATASET = SupervisedDataSet(48000, 5)
 
 
