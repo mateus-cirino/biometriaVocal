@@ -11,11 +11,18 @@ import csv
 
 import math
 
-import numpy
-
 import os
 
-# Constantes
+# SESSAO TREINAMENTO
+VERSAO = "48000-100-100-10-5"
+NETWORK = buildNetwork(48000, 100, 100, 10, 5)
+
+# SESSAO TESTES
+# VERSAO = "48000-100-100-10-5-TESTE-AUDIO-JOAS"
+# NETWORK = NetworkReader.readFrom('resultado/48000-100-100-10-5/network.xml');
+
+# OUTROS
+CAMINHO_RESULTADO = "resultado/" + VERSAO + "/"
 EXTENSAO_ARQUIVO_AUDIO = ".ogg"
 NOME_DOS_CAMPOS_VALIDACAO = ["Nome do arquivo",
                              "Segundo",
@@ -36,10 +43,6 @@ NOME_DOS_CAMPOS_VALIDACAO = ["Nome do arquivo",
                              "Erro 5",
                              "Erro quadrático médio"
                              ]
-VERSAO = "48000-100-10-10-5"
-CAMINHO_RESULTADO = "resultado/" + VERSAO + "/"
-NETWORK = buildNetwork(48000, 100, 10, 10, 5)
-# NETWORK = NetworkReader.readFrom('network.xml');
 DATASET = SupervisedDataSet(48000, 5)
 
 
@@ -93,7 +96,8 @@ def treinamentoRedeNeural(rede, dados, nomeDoArquivoDeResultados):
             error = trainer.train()
             writer.writerow(
                 {"Iteração": iteration,
-                 "Erro": error});
+                 "Erro": error})
+            print("i = ", iteration, " erro = ", error)
             iteration += 1
 
 
@@ -140,24 +144,34 @@ def validacaoRedeNeural(rede, dados, nomeDoArquivo, valoresEsperados, nomeDoArqu
                 }
             )
 
+# SESSAO 1 => TREINAMENTO
 
 # CRIANDO OS DIRETORIOS
 os.mkdir("resultado/" + VERSAO)
 
 # TREINAMENTO
-audios = carregarAudios("audios/audiosMateusConjuntoSemPausa/", 1)
+audios = carregarAudios("caminho da pasta com os audios de treinamento do falante 1/", 1)
 
 audiosAposFFT = aplicarFFTnasAmostras(audios)
 
 arrayComOsSegundosDosAudios = separacaoEmSegundosDoAudio(audiosAposFFT)
 
 for segundo in arrayComOsSegundosDosAudios:
-    DATASET.addSample(segundo, (10, 10, 10, 10, 10))
+    DATASET.addSample(segundo, (10, 10, 10, 10, 10)) # os valores (10, 10, 10, 10, 10) foram escolhidos para representar o falante 1
+
+audios = carregarAudios("caminho da pasta com os audios de treinamento do falante 2/", 1)
+
+audiosAposFFT = aplicarFFTnasAmostras(audios)
+
+arrayComOsSegundosDosAudios = separacaoEmSegundosDoAudio(audiosAposFFT)
+
+for segundo in arrayComOsSegundosDosAudios:
+    DATASET.addSample(segundo, (20, 20, 20, 20, 20)) # os valores (20, 20, 20, 20, 20) foram escolhidos para representar o falante 2
 
 treinamentoRedeNeural(NETWORK, DATASET, (CAMINHO_RESULTADO + "TREINAMENTO.csv"))
 
 # VALIDACAO
-audio = carregarAudios("audios/audiosMateusTesteSemEspacoEmBranco/", 1)
+audio = carregarAudios("caminho da pasta com os audios de validacao do falante 1/", 1)
 
 audioAposFFT = aplicarFFTnasAmostras(audio)
 
@@ -167,3 +181,19 @@ validacaoRedeNeural(NETWORK, arrayComOsSegundosDoAudio, "1.ogg", [10, 10, 10, 10
                     (CAMINHO_RESULTADO + "VALIDACAO.csv"))
 
 NetworkWriter.writeToFile(NETWORK, (CAMINHO_RESULTADO + "network.xml"))
+
+
+# SESSAO 2 => TESTE
+
+# # CRIANDO OS DIRETORIOS
+# os.mkdir("resultado/" + VERSAO)
+#
+# # VALIDACAO
+# audio = carregarAudios("caminho da pasta com os audios de validacao do falante x/", 1)
+#
+# audioAposFFT = aplicarFFTnasAmostras(audio)
+#
+# arrayComOsSegundosDoAudio = separacaoEmSegundosDoAudio(audioAposFFT)
+#
+# validacaoRedeNeural(NETWORK, arrayComOsSegundosDoAudio, "1.ogg", [10, 10, 10, 10, 10],
+#                     (CAMINHO_RESULTADO + "VALIDACAO.csv"))
