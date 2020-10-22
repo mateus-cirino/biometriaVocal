@@ -65,7 +65,7 @@ def separacaoEmSegundosDoAudio(arrayDeAmostras):
 
 
 # Função para treinamento da Rede Neural Artificial
-def treinamentoRedeNeural(rede, dados, nomeDoArquivoDeResultados):
+def treinamentoRedeNeural(rede, dados):
     trainer = BackpropTrainer(rede, dados)
     error = 1
 
