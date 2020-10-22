@@ -74,7 +74,7 @@ def treinamentoRedeNeural(rede, dados):
 
 
 # Função para a validação da Rede Neural Artificial
-def validacaoRedeNeural(rede, dados, nomeDoArquivo, valoresEsperados, nomeDoArquivoDeResultados):
+def validacaoRedeNeural(rede, dados):
     for segundo in dados:
         saidaDaRedeNeural = rede.activate(segundo)
 
@@ -111,8 +111,7 @@ audioAposFFT = aplicarFFTnasAmostras(audio)
 
 arrayComOsSegundosDoAudio = separacaoEmSegundosDoAudio(audioAposFFT)
 
-validacaoRedeNeural(NETWORK, arrayComOsSegundosDoAudio, "1.ogg", [10, 10, 10, 10, 10],
-                    (CAMINHO_RESULTADO + "VALIDACAO.csv"))
+validacaoRedeNeural(NETWORK, arrayComOsSegundosDoAudio)
 
 NetworkWriter.writeToFile(NETWORK, (CAMINHO_RESULTADO + "network.xml"))
 
